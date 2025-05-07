@@ -17,9 +17,10 @@ export default function TicketDetailPage() {
   const [aiLoading, setAiLoading] = useState(true); // Track AI loading state
   const [isRecommendationsExpanded, setIsRecommendationsExpanded] =
     useState(false); // Track whether the recommendations are expanded
-  const access_token = localStorage.getItem("access_token");
 
   useEffect(() => {
+  const access_token = localStorage.getItem("access_token");
+
     const fetchTicket = async () => {
       try {
         const response = await api.get(`/tickets/${id}`, {
@@ -96,6 +97,8 @@ export default function TicketDetailPage() {
   };
 
   const handleProceedToPayment = async () => {
+  const access_token = localStorage.getItem("access_token");
+
     if (!access_token) {
       Swal.fire({
         title: "Oops!",
