@@ -37,6 +37,17 @@ export default function RegisterPage() {
   }
   return (
     <div className="min-h-screen flex flex-col justify-center items-center px-6 py-12 bg-[url('/background.jpg')] bg-cover bg-center bg-no-repeat">
+      <div className="flex-1 flex items-center justify-center">
+        <div className="bg-black-300 px-4 py-2 rounded-xl shadow-lg flex items-center gap-2">
+          <Link
+            to="/"
+            className="flex items-center text-4xl font-bold text-black"
+          >
+            <img src="/logoweb.png" alt="logo.png" className="w-12 h-12 mr-2" />
+            TicketGo!
+          </Link>
+        </div>
+      </div>
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <img
           alt="Your Company"
@@ -128,14 +139,6 @@ export default function RegisterPage() {
             Login
           </Link>
         </p>
-        <div className="mt-4">
-          <button
-            onClick={() => navigate("/")}
-            className="flex w-full justify-center rounded-md bg-cyan-200 px-3 py-1.5 text-sm font-semibold text-black hover:bg-gray-400"
-          >
-            Back to Home
-          </button>
-        </div>
       </div>
     </div>
   );
