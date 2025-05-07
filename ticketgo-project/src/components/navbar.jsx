@@ -25,6 +25,7 @@ export default function Navbar() {
       <div className="navbar max-w-screen-xl mx-auto px-4 justify-between">
         <div className="flex-1 flex items-center gap-0">
           <Link to="/" className="btn btn-ghost text-3xl font-bold px-1">
+          <img src="/logoweb.png" alt="logo.png" className="w-8 h-8" />
             TicketGo!
           </Link>
         </div>

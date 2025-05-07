@@ -35,8 +35,8 @@ export default function PubHomePage() {
       <Navbar/>
 
       <div className="w-full pt-8 px-4 md:px-10">
-        <h1 className="text-3xl font-bold text-center mb-6 bg-black/50 text-white py-2 rounded-lg shadow-lg max-w-xs mx-auto">
-          Tickets
+        <h1 className="text-5xl font-bold text-center text-teal-700 mb-8">
+        🎟️Tickets
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 py-4 max-w-screen-xl mx-auto">
