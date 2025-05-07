@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../components/UrlApi";
-import NavbarLogin from "../components/NavbarLogin";
 import TicketCard from "../components/TicketCard";
+import Navbar from "../components/Navbar";
 
 export default function PubHomePage() {
   const [tickets, setTickets] = useState([]);
@@ -32,7 +32,7 @@ export default function PubHomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[url('/background.jpg')] bg-no-repeat bg-cover bg-center bg-fixed pt-14">
-      <NavbarLogin />
+      <Navbar/>
 
       <div className="w-full pt-8 px-4 md:px-10">
         <h1 className="text-3xl font-bold text-center mb-6 bg-black/50 text-white py-2 rounded-lg shadow-lg max-w-xs mx-auto">
