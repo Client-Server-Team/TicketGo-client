@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router'
-import Navbar from "../components/NavbarLogout"
+import Navbar from '../components/Navbar'
 
 export default function AuthLayout() {
     const access_token = localStorage.getItem("access_token")
