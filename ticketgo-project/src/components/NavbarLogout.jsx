@@ -1,6 +1,6 @@
 import { Link, NavLink, useNavigate } from "react-router";
 
-export default function Navbar() {
+export default function NavbarLogout() {
   const navigate = useNavigate();
 
   async function handleLogout() {
