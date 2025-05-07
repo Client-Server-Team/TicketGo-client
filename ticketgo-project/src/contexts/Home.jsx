@@ -9,7 +9,6 @@ const HomeContext = createContext({
 export default HomeContext;
 
 export function Home(props) {
-  console.log(props, "<<<< get data dari context");
 
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);

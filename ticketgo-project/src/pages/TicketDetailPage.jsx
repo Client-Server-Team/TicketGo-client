@@ -5,6 +5,7 @@ import { formatRupiah } from "../helpers/formatRP";
 import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
+import { socket } from "../lib/socket";
 
 export default function TicketDetailPage() {
   const { id } = useParams();
@@ -15,19 +16,40 @@ export default function TicketDetailPage() {
   const [recommendations, setRecommendations] = useState(null); // For AI recommendations
   const [otherTickets, setOtherTickets] = useState([]); // For other tickets with similar genre
   const [aiLoading, setAiLoading] = useState(true); // Track AI loading state
-  const [isRecommendationsExpanded, setIsRecommendationsExpanded] =
-    useState(false); // Track whether the recommendations are expanded
+  const [isRecommendationsExpanded, setIsRecommendationsExpanded] = useState(false); // Track whether the recommendations are expanded
+
+  //! socket
+  const [newQtyClient, setNewQtyClient] = useState(0)
+  useEffect(() => {
+
+    socket.auth = { //! socket untuk ngirim access_token ke server (headers axios)
+      access_token : localStorage.getItem("access_token"),
+      ticketId : id
+    }
+
+    socket.emit(`trigger/newQty-${id}`,{ //! mengirimkan ticket id untuk dicari quantity menggunakan axios
+      ticketId : id
+    })
+    
+
+    socket.on(`res/newQty-${id}`,(arg) => { //! menerima new qty dari server, untuk di set html
+      setNewQtyClient(arg.newQty)
+    })
+    
+    socket.disconnect().connect()
+
+  },[])
 
   useEffect(() => {
-  const access_token = localStorage.getItem("access_token");
 
     const fetchTicket = async () => {
       try {
         const response = await api.get(`/tickets/${id}`, {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         });
+        
         setTicket(response.data);
       } catch (error) {
         console.error("Failed to fetch ticket details:", error);
@@ -40,12 +62,14 @@ export default function TicketDetailPage() {
       try {
         const response = await api.get(`/tickets/${id}/summary`, {
           headers: {
-            Authorization: `Bearer ${access_token}`,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         });
         setRecommendations(response.data.recommendation);
         setOtherTickets(response.data.otherTickets);
       } catch (error) {
+        console.log(error);
+        
         console.error("Failed to fetch AI ticket recommendations:", error);
       } finally {
         setAiLoading(false); // Set AI loading to false once done
@@ -96,8 +120,10 @@ export default function TicketDetailPage() {
     }
   };
 
+  
+
   const handleProceedToPayment = async () => {
-  const access_token = localStorage.getItem("access_token");
+    const access_token = localStorage.getItem("access_token");
 
     if (!access_token) {
       Swal.fire({
@@ -116,29 +142,32 @@ export default function TicketDetailPage() {
 
     setLoading(true);
     try {
-      const response = await api.post(
-        `/myticket/${id}`,
-        {
-          totalPrice: totalPrice,
-          totalQuantity: quantityToBuy,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      );
 
-      if (response.status === 201) {
-        Swal.fire({
-          title: "Success!",
-          text: "Your ticket has been successfully purchased!",
-          icon: "success",
-        }).then(() => {
-          navigate("/mytickets"); // Redirect to My Tickets page
-        });
-      }
-    } catch (error) {
+      //! socket
+      socket.emit(
+        `trigger/buy-${id}`, 
+        {
+          totalPrice : totalPrice,
+          totalQuantity : quantityToBuy,
+          ticketId : id
+        }, 
+        (response) => {
+          if (response.message) {
+            Swal.fire({
+              title: "Error!",
+              text:
+              response.message ||
+                "An error occurred while processing your transaction.",
+              icon: "error",
+            });
+            navigate("/")
+          }
+        }
+      )
+
+      navigate("/mytickets")
+
+    } catch (error) { //! handle error sudah di callback-nya socket
       Swal.fire({
         title: "Error!",
         text:
@@ -195,8 +224,11 @@ export default function TicketDetailPage() {
             <p>
               <strong>Location:</strong> {location}
             </p>
-            <p>
+            {/* <p>
               <strong>Available Tickets:</strong> {quantity}
+            </p> */}
+            <p>
+              <strong>Available Tickets:</strong> {newQtyClient}
             </p>
             <p>
               <strong>Price:</strong> {formatRupiah(price)}
@@ -266,9 +298,9 @@ export default function TicketDetailPage() {
             Other Concerts You Might Like
           </h2>
           <div className="mt-6 grid md:grid-cols-2 gap-6">
-            {otherTickets.map((ticket) => (
+            {otherTickets.map((ticket,idx) => (
               <div
-                key={ticket.id}
+                key={idx}
                 className="bg-cyan-50 p-4 rounded-md shadow-md"
               >
                 <img
