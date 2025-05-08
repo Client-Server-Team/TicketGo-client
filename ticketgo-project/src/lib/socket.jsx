@@ -1,2 +1,2 @@
 import { io } from "socket.io-client";
-export const socket = io("ws://p2-gp.mfaishaldp.my.id");
+export const socket = io("https://p2-gp.mfaishaldp.my.id");
