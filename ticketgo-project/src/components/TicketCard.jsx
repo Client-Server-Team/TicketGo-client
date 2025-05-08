@@ -1,12 +1,36 @@
-import { Link, useNavigate } from "react-router";
-import { api } from "../components/UrlApi";
+import { useRef } from "react";
+import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
 import { motion } from "framer-motion";
 import { formatRupiah } from "../helpers/formatRP";
 
 export default function TicketCard({ ticket }) {
   const navigate = useNavigate();
-  const { name, imageUrl, quantity, price, date, location } = ticket;
+  const { id, name, imageUrl, quantity, price, date, location, audioFile } = ticket;
+
+  const audioRef = useRef(null);
+
+  let playTimeout;
+
+  const handleMouseEnter = () => {
+    if (audioRef.current) {
+      clearTimeout(playTimeout); // prevent stacking
+      playTimeout = setTimeout(() => {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch((err) => {
+          console.error("Audio play failed:", err);
+        });
+      }, 100); // delay 100ms
+    }
+  };
+
+  const handleMouseLeave = () => {
+    clearTimeout(playTimeout); // cancel pending play
+    if (audioRef.current && !audioRef.current.paused) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
 
   const handleBuyNow = () => {
     const access_token = localStorage.getItem("access_token");
@@ -35,6 +59,8 @@ export default function TicketCard({ ticket }) {
 
   return (
     <motion.div
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       initial={{ opacity: 0, y: 300 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
@@ -80,6 +106,9 @@ export default function TicketCard({ ticket }) {
             </button>
           </div>
         </div>
+
+        {/* Audio tag with dynamic source */}
+        {audioFile && <audio ref={audioRef} src={`/sounds/${audioFile}`} />}
       </div>
     </motion.div>
   );
