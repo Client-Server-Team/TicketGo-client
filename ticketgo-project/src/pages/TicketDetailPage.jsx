@@ -20,25 +20,49 @@ export default function TicketDetailPage() {
 
   //! socket
   const [newQtyClient, setNewQtyClient] = useState(0)
+  // useEffect(() => {
+
+  //   socket.auth = { //! socket untuk ngirim access_token ke server (headers axios)
+  //     access_token : localStorage.getItem("access_token"),
+  //     ticketId : id
+  //   }
+
+  //   socket.emit(`trigger/newQty-${id}`,{ //! mengirimkan ticket id untuk dicari quantity menggunakan axios
+  //     ticketId : id
+  //   })
+    
+
+  //   socket.on(`res/newQty-${id}`,(arg) => { //! menerima new qty dari server, untuk di set html
+  //     setNewQtyClient(arg.newQty)
+  //   })
+    
+  //   socket.disconnect().connect()
+
+  // },[])
+
   useEffect(() => {
-
-    socket.auth = { //! socket untuk ngirim access_token ke server (headers axios)
-      access_token : localStorage.getItem("access_token"),
-      ticketId : id
-    }
-
-    socket.emit(`trigger/newQty-${id}`,{ //! mengirimkan ticket id untuk dicari quantity menggunakan axios
-      ticketId : id
-    })
-    
-
-    socket.on(`res/newQty-${id}`,(arg) => { //! menerima new qty dari server, untuk di set html
-      setNewQtyClient(arg.newQty)
-    })
-    
-    socket.disconnect().connect()
-
-  },[])
+    socket.auth = {
+      access_token: localStorage.getItem("access_token"),
+      ticketId: id
+    };
+  
+    socket.disconnect().connect();
+  
+    socket.on("connect", () => {
+      socket.emit(`trigger/newQty-${id}`, {
+        ticketId: id
+      });
+    });
+  
+    socket.on(`res/newQty-${id}`, (arg) => {
+      setNewQtyClient(arg.newQty);
+    });
+  
+    return () => {
+      socket.off("connect");
+      socket.off(`res/newQty-${id}`);
+    };
+  }, [id]);
 
   useEffect(() => {
 
