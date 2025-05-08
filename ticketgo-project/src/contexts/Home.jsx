@@ -16,7 +16,6 @@ export function Home(props) {
   async function fetchTickets() {
     setLoading(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
     const response = await api.get("/tickets");
     setTickets(response.data);
     setLoading(false);
