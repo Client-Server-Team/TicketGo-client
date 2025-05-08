@@ -27,7 +27,8 @@ export default function PubHomePage() {
           🎟️Tickets
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 py-4 max-w-screen-xl mx-auto">
+        <div className="grid grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))] gap-6 py-4 max-w-screen-xl mx-auto">
+
           {tickets &&
             tickets.map((ticket) => (
               <TicketCard key={ticket.id} ticket={ticket} />
