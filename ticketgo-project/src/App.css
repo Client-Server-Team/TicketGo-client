@@ -1,0 +1,19 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@keyframes moveText {
+    0% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(10px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  
+  .moveText {
+    animation: moveText 1.5s ease-in-out infinite;
+  }
+  
